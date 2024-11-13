@@ -1,71 +1,80 @@
-public class N_Queen {
 
-    public static boolean isSafe(char board[][],int row ,int col){
-        //vertical up
-        for( int i=row-1;i>=0;i--){
-            if(board[i][col]=='Q'){
+public class NQueens {
+
+    // Method to solve the N-Queens problem
+    public static boolean solveNQueens(int board[][], int row) {
+        int N = board.length;
+
+        // Base case: If all queens are placed, return true
+        if (row >= N) {
+            return true;
+        }
+
+        // Try placing the queen in each column of the current row
+        for (int col = 0; col < N; col++) {
+            if (isSafe(board, row, col)) {
+                board[row][col] = 1; // Place the queen
+
+                // Recurse to place the rest of the queens
+                if (solveNQueens(board, row + 1)) {
+                    return true;
+                }
+
+                board[row][col] = 0; // Backtrack and remove the queen
+            }
+        }
+
+        // If the queen cannot be placed in any column in this row, return false
+        return false;
+    }
+
+    // Helper method to check if it's safe to place a queen at board[row][col]
+    public static boolean isSafe(int[][] board, int row, int col) {
+        int N = board.length;
+
+        // Check the column
+        for (int i = 0; i < row; i++) {
+            if (board[i][col] == 1) {
                 return false;
             }
         }
 
-        //diag left up
-        for(int i = row-1 , j=col-1;i>=0 && j>=0;i--,j--){
-            if(board[i][j]=='Q'){
+        // Check the upper left diagonal
+        for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+            if (board[i][j] == 1) {
                 return false;
             }
         }
 
-        //diag right up
-        for(int i = row-1,j = col+1;i>=0 && j<board.length;i++,j++){
-            if(board[i][j]=='Q'){
+        // Check the upper right diagonal
+        for (int i = row, j = col; i >= 0 && j < N; i--, j++) {
+            if (board[i][j] == 1) {
                 return false;
             }
         }
+
         return true;
     }
 
-    public static void nQueens(char board[][],int row){
-
-        //base
-        if(row == board.length){
-            printBoard(board);
-            count++;
-            return;
-        }
-
-        //column loop
-        for(int j = 0; j<board.length;j++){
-            if(isSafe(board,row,j)){
-                board[row][j] = 'Q';
-                nQueens(board,row+1);   //function call
-                board[row][j] = 'x';   // back tracking
-            }
-        }
-    }
-
-    public static void printBoard(char board[][]){
-        System.out.println("-------Chess Board-------");
-        for(int i=0 ; i< board.length;i++){
-            for(int j = 0 ; j<board.length;j++){
-                System.out.print(board[i][j] + " ");
+    // Method to print the board
+    public static void printBoard(int[][] board) {
+        for (int[] row : board) {
+            for (int cell : row) {
+                System.out.print(cell == 1 ? "Q " : ". ");
             }
             System.out.println();
         }
     }
 
-    static int count =0;
+    public static void main(String[] args) {
+        int N = 4; // Change this for different sizes
+        int[][] board = new int[N][N];
 
-    public static void main(String args[]){
-          int n = 3, m =3;
-
-       //initialize
-        char board[][] = new char[n][n];
-       for(int i = 0; i < n ; i++){
-            for(int j = 0; j < n;j++){
-                board[i][j] = 'x';
-            }
+        if (solveNQueens(board, 0)) {
+            System.out.println("Solution for " + N + "-Queens:");
+            printBoard(board);
+        } else {
+            System.out.println("No solution exists for " + N + "-Queens.");
         }
-        nQueens(board,0);
-        System.out.println("Total ways to solve n queens = " + count);
     }
 }
